@@ -313,7 +313,7 @@ class ResultsTreeWidget(QtWidgets.QTreeWidget):
             )
 
     def generate_html(self):
-        def get_text_color(item):
+        def get_text_color(item: QtWidgets.QTreeWidgetItem):
             color = item.foreground(0).color()
             return color.name()
 
