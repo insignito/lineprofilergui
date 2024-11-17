@@ -312,6 +312,56 @@ class ResultsTreeWidget(QtWidgets.QTreeWidget):
                 col, not settings.value(f"column{col+1}Visible", True, bool)
             )
 
+    def generate_html(self):
+        def get_text_color(item):
+            color = item.foreground(0).color()
+            return color.name()
+
+        def get_background_color(item: QtWidgets.QTreeWidgetItem):
+            color = item.background(0).color().name(QtGui.QColor.HexArgb)
+            return color[0] + color[3:] + color[1:3]  # Swap alpha and color
+
+        html = "<html><head><style>"
+        html += "ul {list-style-type: none;}"
+        html += (
+            "body {background-color: #282A36; color: #F8F8F2; font-family: monospace;}"
+        )
+        html += "li {margin: 5px 0;}"
+        html += "</style></head><body>"
+
+        for i in range(self.topLevelItemCount()):
+            top_item = self.topLevelItem(i)
+            html += '<ul class="tree">'
+            html += "<li>"
+            html += "<details open>"
+            html += f"<summary>{top_item.text(0)}</summary>"
+            html += "<table>"
+            html += "<tr>"
+            for col in range(self.columnCount()):
+                if not self.isColumnHidden(col):
+                    html += f"<th>{self.headerItem().text(col)}</th>"
+            html += "</tr>"
+            for j in range(top_item.childCount()):
+                child = top_item.child(j)
+                bg_color = get_background_color(child)
+                if bg_color == "#000000ff":
+                    bg_color = "#282A36ff"
+                text_color = get_text_color(child)
+                if text_color == "#000000":
+                    text_color = "#F8F8F2"
+                html += "<tr>"
+                for col in range(self.columnCount()):
+                    if not self.isColumnHidden(col):
+                        html += f'<td style="background-color:{bg_color}; color:{text_color}; white-space: pre;">{child.text(col)}</td>'
+                html += "</tr>"
+            html += "</table>"
+            html += "</details>"
+            html += "</li>"
+            html += "</ul>"
+
+        html += "</body></html>"
+        return html
+
     @QtCore.Slot(QtWidgets.QTreeWidgetItem)
     def item_activated(self, item):
         # Skip parent lines

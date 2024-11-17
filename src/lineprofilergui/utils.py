@@ -19,6 +19,7 @@ _ICON_IDS = {
     "SETTINGS": QtWidgets.QStyle.SP_FileDialogListView,  # actionSettings
     "BLANKFILE": QtWidgets.QStyle.SP_FileIcon,  # statsButton
     "READFILE": QtWidgets.QStyle.SP_FileDialogContentsView,  # scriptButton, kernprofButton
+    "SAVEFILE": QtWidgets.QStyle.SP_DialogSaveButton,  # scriptButton, kernprofButton
     "DIRECTORY": QtWidgets.QStyle.SP_DirIcon,  # wdirButton
     "EXPAND": QtWidgets.QStyle.SP_ToolBarVerticalExtensionButton,  # actionExpand_all
     "COLLAPSE": QtWidgets.QStyle.SP_ToolBarHorizontalExtensionButton,  # actionCollapse_all
