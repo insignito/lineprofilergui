@@ -65,6 +65,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.actionShowOutput.setIcon(ICONS["INFO"])
         self.actionLoadLprof = QtGui.QAction(self)
         self.actionLoadLprof.setIcon(ICONS["READFILE"])
+        self.actionExport = QtGui.QAction(self)
+        self.actionExport.setIcon(ICONS["EXPORT2HTML"])
         self.actionQuit = QtGui.QAction(self)
         self.actionQuit.setIcon(ICONS["ABORT"])
         self.actionConfigure = QtGui.QAction(self)
@@ -93,6 +95,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.menuProfiling.addAction(self.actionShowOutput)
         self.menuProfiling.addSeparator()
         self.menuProfiling.addAction(self.actionLoadLprof)
+        self.menuProfiling.addAction(self.actionExport)
         self.menuProfiling.addSeparator()
         self.menuProfiling.addAction(self.actionQuit)
         self.menubar.addAction(self.menuProfiling.menuAction())
@@ -164,6 +167,7 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.actionAbort.triggered.connect(self.kernprof_run.kill)
         self.actionShowOutput.toggled.connect(self.dockOutputWidget.setVisible)
         self.actionLoadLprof.triggered.connect(self.selectLprof)
+        self.actionExport.triggered.connect(self.exportLProfile)
         self.actionQuit.triggered.connect(QtWidgets.QApplication.instance().quit)
         self.actionLine_profiler_documentation.triggered.connect(
             lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(LINE_PROFILER_DOC_URL))
@@ -197,6 +201,8 @@ class UIMainWindow(QtWidgets.QMainWindow):
         self.actionShowOutput.setShortcut(_("F7"))
         self.actionLoadLprof.setText(_("&Load data..."))
         self.actionLoadLprof.setShortcut(_("Ctrl+O"))
+        self.actionExport.setText(_("&Export as HTML..."))
+        self.actionExport.setShortcut(_("Ctrl+E"))
         self.actionQuit.setText(_("&Quit"))
         self.actionQuit.setShortcut(_("Ctrl+Q"))
         self.actionConfigure.setText(_("&Configuration..."))
@@ -248,6 +254,18 @@ class UIMainWindow(QtWidgets.QMainWindow):
         )
         if filename:
             self.load_lprof(filename)
+
+    def exportLProfile(self):
+        filename, _selfilter = QtWidgets.QFileDialog.getSaveFileName(
+            self,
+            _("Export line profiler data as HTML"),
+            "",
+            _("HTML") + " (*.html);; " + _("All files") + " (*.*)",
+        )
+        if filename:
+            html = self.resultsTreeWidget.generate_html()
+            with open(filename, "w") as f:
+                f.write(html)
 
     @QtCore.Slot()
     def configure(self):
